@@ -2,11 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="155ff2d5-27c2-42d9-aa0b-2b59262300fb" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/scenario2/Polygon.class" afterPath="$PROJECT_DIR$/out/production/scenario2/Polygon.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/scenario2/scenario.class" afterPath="$PROJECT_DIR$/out/production/scenario2/scenario.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/scenario2/input.txt" afterPath="$PROJECT_DIR$/out/production/scenario2/input.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/input.txt" afterPath="$PROJECT_DIR$/src/input.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/scenario.java" afterPath="$PROJECT_DIR$/src/scenario.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -25,8 +20,8 @@
       <file leaf-file-name="scenario.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/scenario.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="472">
-              <caret line="46" column="44" lean-forward="false" selection-start-line="46" selection-start-column="44" selection-end-line="46" selection-end-column="44" />
+            <state relative-caret-position="214">
+              <caret line="261" column="4" lean-forward="false" selection-start-line="261" selection-start-column="4" selection-end-line="261" selection-end-column="4" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -296,13 +291,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/scenario.java</url>
-          <line>227</line>
+          <line>228</line>
           <properties />
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/scenario.java</url>
-          <line>126</line>
+          <line>127</line>
           <properties />
           <option name="timeStamp" value="15" />
         </line-breakpoint>
@@ -385,8 +380,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/scenario.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="472">
-          <caret line="46" column="44" lean-forward="false" selection-start-line="46" selection-start-column="44" selection-end-line="46" selection-end-column="44" />
+        <state relative-caret-position="214">
+          <caret line="261" column="4" lean-forward="false" selection-start-line="261" selection-start-column="4" selection-end-line="261" selection-end-column="4" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

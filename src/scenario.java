@@ -21,6 +21,7 @@ class Polygon {
 };
 
 
+
 class scenario {
 
 
@@ -240,6 +241,43 @@ class scenario {
             e.printStackTrace();
         }
     }
+
+    public boolean contains2(Point p, Point[] a, int N) {
+        int crossings = 0;
+        for (int i = 0; i < N; i++) {
+            int j = i + 1;
+            boolean cond1 = (a[i].y <= p.y) && (p.y < a[j].y);
+            boolean cond2 = (a[j].y <= p.y) && (p.y < a[i].y);
+            if (cond1 || cond2) {
+                // need to cast to double
+                if (p.x < (a[j].x - a[i].x) * (p.y - a[i].y) / (a[j].y - a[i].y) + a[i].x)
+                    crossings++;
+            }
+        }
+        if (crossings % 2 == 1) return true;
+        else                    return false;
+    }
+    double[] xpoints;
+    double[] ypoints;
+    
+    public boolean isInsidePolygon(Polygon polygon1, Polygon polygon2){
+        //all points in inner Polygon should be contained in polygon
+        for(int i=0;i<polygon2.number_of_vertices;i++)
+        {
+            xpoints[i]=polygon2.vertices[i].x;
+            ypoints[i]=polygon2.vertices[i].y;
+        }
+        boolean result =  true;
+        for (int i = 0, j = 0; i < polygon2.number_of_vertices ; i++,j++) {
+            Point p=new Point();
+            p.x=xpoints[i];
+            p.y=ypoints[i];
+            result = contains2(p, polygon1.vertices, polygon1.number_of_vertices);
+            if(!result) break;
+        }
+        return result;
+    }
+
 
     public static void main(String[] args) {
         scenario scenario = new scenario();
