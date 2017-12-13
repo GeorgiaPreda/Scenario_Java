@@ -3,6 +3,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 import static java.lang.Double.max;
 import static java.lang.Math.min;
@@ -28,8 +32,13 @@ class scenario {
     Polygon my_furniture[];
     Polygon my_room;
 
-    Polygon total_rooms[][];
-    Polygon total_furniture[][];
+    ArrayList<Polygon> total_room=new ArrayList<>();
+    HashMap<Integer, Polygon[]> total_furniture=new HashMap<>();
+
+    int number_of_rooms;
+    int number_of_furniture;
+
+
 
     //rotate a polygon by angle degrees around a point p
     Polygon rotate_by_angle(double angle, Polygon p) {
@@ -54,58 +63,7 @@ class scenario {
 
     }
 
-    // Given three colinear points p, q, r, the function checks if
-// point q lies on line segment 'pr'
-    boolean onSegment(Point p, Point q, Point r) {
-        if (q.x <= max(p.x, r.x) && q.x >= min(p.x, r.x) &&
-                q.y <= max(p.y, r.y) && q.y >= min(p.y, r.y))
-            return true;
 
-        return false;
-    }
-
-    // To find orientation of ordered triplet (p, q, r).
-// The function returns following values
-// 0 --> p, q and r are colinear
-// 1 --> Clockwise
-// 2 --> Counterclockwise
-    int orientation(Point p, Point q, Point r) {
-        // See http://www.geeksforgeeks.org/orientation-3-ordered-points/
-        // for details of below formula.
-        double val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
-
-        if (val == 0) return 0;  // colinear
-
-        return (val > 0) ? 1 : 2; // clock or counterclock wise
-    }
-
-    boolean doIntersect(Point p1, Point q1, Point p2, Point q2) {
-        // Find the four orientations needed for general and
-        // special cases
-        int o1 = orientation(p1, q1, p2);
-        int o2 = orientation(p1, q1, q2);
-        int o3 = orientation(p2, q2, p1);
-        int o4 = orientation(p2, q2, q1);
-
-        // General case
-        if (o1 != o2 && o3 != o4)
-            return true;
-
-        // Special Cases
-        // p1, q1 and p2 are colinear and p2 lies on segment p1q1
-        if (o1 == 0 && onSegment(p1, p2, q1)) return true;
-
-        // p1, q1 and p2 are colinear and q2 lies on segment p1q1
-        if (o2 == 0 && onSegment(p1, q2, q1)) return true;
-
-        // p2, q2 and p1 are colinear and p1 lies on segment p2q2
-        if (o3 == 0 && onSegment(p2, p1, q2)) return true;
-
-        // p2, q2 and q1 are colinear and q1 lies on segment p2q2
-        if (o4 == 0 && onSegment(p2, q1, q2)) return true;
-
-        return false; // Doesn't fall in any of the above cases
-    }
 
     public void parse_room() {
         try {
@@ -125,6 +83,7 @@ class scenario {
             System.out.println(stringBuffer.toString());
             String[] lines = stringBuffer.toString().split("\\n");
             my_room = new Polygon();
+            int room_number=0;
             for (String s : lines) {
                 String parts_room[] = s.split("#");
                 room = parts_room[0];
@@ -169,7 +128,7 @@ class scenario {
                     }
 
                 }
-                nr_of_vert--;
+               // nr_of_vert--;
                 p.number_of_vertices=nr_of_vert;
                 Polygon fin=new Polygon();
                 fin.number_of_vertices=nr_of_vert;
@@ -179,6 +138,7 @@ class scenario {
                     fin.vertices[i]=p.vertices[i];
                 }
                 my_room = fin;
+                total_room.add(my_room);
                 furniture = parts_room[1];
                 System.out.println("Furniture = " + furniture);
                 int nr_of_furniture=0;
@@ -213,7 +173,7 @@ class scenario {
                         }
 
                     }
-                    nr_of_vert--;
+                  //  nr_of_vert--;
                     pol.number_of_vertices=nr_of_vert;
                     Polygon finalp= new Polygon();
                     finalp.number_of_vertices=nr_of_vert;
@@ -223,11 +183,17 @@ class scenario {
                         System.out.println(pol.vertices[i].x + " " + pol.vertices[i].y);
                         finalp.vertices[i]=pol.vertices[i];
                     }
-
                     my_furniture[nr_of_furniture++]=finalp;
+
                 }
                 nr_of_furniture--;
-                for(Polygon poli:my_furniture)
+                Polygon final_furn[]=new Polygon[nr_of_furniture];
+
+                for(int i=0;i<nr_of_furniture;i++)
+                {
+                    final_furn[i]=my_furniture[i];
+                }
+                for(Polygon poli:final_furn)
                 {
                     System.out.println("Cost: "+poli.cost);
                     for(Point pi:poli.vertices)
@@ -235,6 +201,9 @@ class scenario {
                         System.out.print("x coord: " +pi.x+ "y coord " + pi.y);
                     }
                 }
+
+                total_furniture.put(room_number,final_furn);
+                room_number++;
             }
 
         } catch (IOException e) {
@@ -242,46 +211,154 @@ class scenario {
         }
     }
 
-    public boolean contains2(Point p, Point[] a, int N) {
-        int crossings = 0;
-        for (int i = 0; i < N; i++) {
-            int j = i + 1;
-            boolean cond1 = (a[i].y <= p.y) && (p.y < a[j].y);
-            boolean cond2 = (a[j].y <= p.y) && (p.y < a[i].y);
-            if (cond1 || cond2) {
-                // need to cast to double
-                if (p.x < (a[j].x - a[i].x) * (p.y - a[i].y) / (a[j].y - a[i].y) + a[i].x)
-                    crossings++;
-            }
-        }
-        if (crossings % 2 == 1) return true;
-        else                    return false;
-    }
-    double[] xpoints;
-    double[] ypoints;
-    
-    public boolean isInsidePolygon(Polygon polygon1, Polygon polygon2){
-        //all points in inner Polygon should be contained in polygon
-        for(int i=0;i<polygon2.number_of_vertices;i++)
-        {
-            xpoints[i]=polygon2.vertices[i].x;
-            ypoints[i]=polygon2.vertices[i].y;
-        }
-        boolean result =  true;
-        for (int i = 0, j = 0; i < polygon2.number_of_vertices ; i++,j++) {
-            Point p=new Point();
-            p.x=xpoints[i];
-            p.y=ypoints[i];
-            result = contains2(p, polygon1.vertices, polygon1.number_of_vertices);
-            if(!result) break;
-        }
-        return result;
+  /*  boolean onSegment(Point p, Point q, Point r)
+    {
+        if (q.x <= max(p.x, r.x) && q.x >= min(p.x, r.x) &&
+                q.y <= max(p.y, r.y) && q.y >= min(p.y, r.y))
+            return true;
+        return false;
     }
 
+    // To find orientation of ordered triplet (p, q, r).
+// The function returns following values
+// 0 --> p, q and r are colinear
+// 1 --> Clockwise
+// 2 --> Counterclockwise
+    int orientation(Point p, Point q, Point r)
+    {
+        double val = (q.y - p.y) * (r.x - q.x) -
+                (q.x - p.x) * (r.y - q.y);
+
+        if (val == 0) return 0;  // colinear
+        return (val > 0)? 1: 2; // clock or counterclock wise
+    }
+
+    // The function that returns true if line segment 'p1q1'
+// and 'p2q2' intersect.
+    boolean doIntersect(Point p1, Point q1, Point p2, Point q2)
+    {
+        // Find the four orientations needed for general and
+        // special cases
+        int o1 = orientation(p1, q1, p2);
+        int o2 = orientation(p1, q1, q2);
+        int o3 = orientation(p2, q2, p1);
+        int o4 = orientation(p2, q2, q1);
+
+        // General case
+        if (o1 != o2 && o3 != o4)
+            return true;
+
+        // Special Cases
+        // p1, q1 and p2 are colinear and p2 lies on segment p1q1
+        if (o1 == 0 && onSegment(p1, p2, q1)) return true;
+
+        // p1, q1 and p2 are colinear and q2 lies on segment p1q1
+        if (o2 == 0 && onSegment(p1, q2, q1)) return true;
+
+        // p2, q2 and p1 are colinear and p1 lies on segment p2q2
+        if (o3 == 0 && onSegment(p2, p1, q2)) return true;
+
+        // p2, q2 and q1 are colinear and q1 lies on segment p2q2
+        if (o4 == 0 && onSegment(p2, q1, q2)) return true;
+
+        return false; // Doesn't fall in any of the above cases
+    }
+
+    // Returns true if the point p lies inside the polygon[] with n vertices
+    boolean isInside(Point polygon[], int n, Point p)
+    {
+        // There must be at least 3 vertices in polygon[]
+        if (n < 3)  return false;
+
+        // Create a point for line segment from p to infinite
+        Point extreme = {Double.POSITIVE_INFINITY, p.y};
+
+        // Count intersections of the above line with sides of polygon
+        int count = 0, i = 0;
+        do
+        {
+            int next = (i+1)%n;
+
+            // Check if the line segment from 'p' to 'extreme' intersects
+            // with the line segment from 'polygon[i]' to 'polygon[next]'
+            if (doIntersect(polygon[i], polygon[next], p, extreme))
+            {
+                // If the point 'p' is colinear with line segment 'i-next',
+                // then check if it lies on segment. If it lies, return true,
+                // otherwise false
+                if (orientation(polygon[i], p, polygon[next]) == 0)
+                    return onSegment(polygon[i], p, polygon[next]);
+
+                count++;
+            }
+            i = next;
+        } while (i != 0);
+
+        // Return true if count is odd, false otherwise
+        return count&1;  // Same as (count%2 == 1)
+    }
+*/
+    public boolean check_with_objects_placed(Polygon p)
+    {
+        return true;
+    }
+
+
+    public void afisare()
+    {
+        for(Polygon p: total_room)
+        {
+            System.out.println("Room number: " +(total_room.indexOf(p)+1));
+            System.out.println("Room number of vertices: "+ p.number_of_vertices);
+            for(int i=0;i<p.number_of_vertices;i++)
+            System.out.println("Room vertices" +p.vertices[i].x+ " "+ p.vertices[i].y);
+        }
+
+
+        for(Map.Entry<Integer, Polygon[]> entry: total_furniture.entrySet()) {
+            Polygon p[]=entry.getValue();
+            for(Polygon poli:p) {
+                System.out.println("Number of vertices: "+ (poli.number_of_vertices));
+                for(Point a:poli.vertices)
+                {
+                    System.out.println("Coordinates: "+a.x+" "+a.y);
+                }
+            }
+        }
+    }
 
     public static void main(String[] args) {
         scenario scenario = new scenario();
+
+        Polygon dummy=new Polygon();
+        Polygon dummy1=new Polygon();
+        dummy.number_of_vertices=3;
+        dummy.vertices=new Point[3];
+        dummy.vertices[0]=new Point();
+        dummy.vertices[0].x=2;
+        dummy.vertices[0].y=5;
+        dummy.vertices[1]=new Point();
+        dummy.vertices[1].x=6;
+        dummy.vertices[1].y=8;
+        dummy.vertices[2]=new Point();
+        dummy.vertices[2].x=10;
+        dummy.vertices[2].y=7;
+        dummy1.number_of_vertices=3;
+        dummy1.vertices=new Point[3];
+        dummy1.vertices[0]=new Point();
+        dummy1.vertices[0].x=7;
+        dummy1.vertices[0].y=6;
+        dummy1.vertices[1]=new Point();
+        dummy1.vertices[1].x=7;
+        dummy1.vertices[1].y=7;
+        dummy1.vertices[2]=new Point();
+        dummy1.vertices[2].x=7;
+        dummy1.vertices[2].y=9;
         scenario.parse_room();
+        scenario.afisare();
+        System.out.print(scenario.isInsidePolygon(dummy,dummy1));
+     //   scenario.parse_room();
+       // for(Polygon pol: total)
     }
 }
 
