@@ -14,7 +14,7 @@ class Point
     double x,y;
 };
 
-class Polygon
+class Polygon1
 {
     Point vertices[]=new Point[50];
     int number_of_vertices;
@@ -25,7 +25,7 @@ class Polygon
 public class scenario {
 
         //rotate a polygon by angle degrees around a point p
-        Polygon rotate_by_angle(double angle, Polygon p)
+        Polygon1 rotate_by_angle(double angle, Polygon1 p)
         {
             float s = (float) sin(angle);
             float c = (float) cos(angle);
@@ -38,7 +38,7 @@ public class scenario {
             return p;
         }
 
-        Polygon translate_polygon(float nx, float ny, Polygon p)
+        Polygon1 translate_polygon(float nx, float ny, Polygon1 p)
         {
 
             for(int i=0; i<p.number_of_vertices; i++)
@@ -126,7 +126,7 @@ public class scenario {
                 String[] lines = stringBuffer.toString().split("\\n");
                 int i=0;
                 for(String s: lines){
-                    Polygon p=new Polygon();
+                    Polygon1 p=new Polygon1();
                     int nr_of_vert=0;
                     String parts_room[]=s.split("#");
                     room=parts_room[0];

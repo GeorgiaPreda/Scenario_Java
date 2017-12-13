@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="javadoc">
+    <CLASSES />
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/Downloads/jts-1.14.zip!/doc/javadoc" />
+      <root url="jar://$USER_HOME$/Downloads/jts-1.14.zip!/jtsio/doc/javadoc" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
