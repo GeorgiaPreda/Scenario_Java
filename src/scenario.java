@@ -1,15 +1,11 @@
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import static java.lang.StrictMath.cos;
@@ -37,7 +33,11 @@ class scenario {
     double room_max;
 
     ArrayList<Polygon1> total_room=new ArrayList<>();
-    HashMap<Integer, Polygon1[]> total_furniture=new HashMap<>();
+    ArrayList<Integer> obiecte_alese=new ArrayList<>();
+
+    ArrayList<Polygon1> final_furniture=new ArrayList<>();
+    ArrayList<Polygon> polygons_placed=new ArrayList<>();
+  //  HashMap<Integer, Polygon1[]> total_furniture=new HashMap<>();
 
     int number_of_rooms;
     int number_of_furniture;
@@ -84,15 +84,15 @@ class scenario {
                 stringBuffer.append("\n");
             }
             fileReader.close();
-            System.out.println("Contents of file:");
-            System.out.println(stringBuffer.toString());
+           // System.out.println("Contents of file:");
+           // System.out.println(stringBuffer.toString());
             String[] lines = stringBuffer.toString().split("\\n");
             my_room = new Polygon1();
             int room_number=0;
             for (String s : lines) {
                 String parts_room[] = s.split("#");
                 room = parts_room[0];
-                System.out.println("Room = " + room);
+               // System.out.println("Room = " + room);
                 String room_vertices[] = room.split(",");
                 Polygon1 p = new Polygon1();
                 p.vertices=new Point[10000];
@@ -120,14 +120,14 @@ class scenario {
                             nr = Double.valueOf(overlook_parant[1]);
                             p.vertices[nr_of_vert] = new Point();
                             p.vertices[nr_of_vert].x = nr;
-                            System.out.println(p.vertices[nr_of_vert].x);
+                           // System.out.println(p.vertices[nr_of_vert].x);
                         }
 
                         if (f.charAt(f.length() - 1) == ')' || f.charAt(f.length() - 2) == ')') {
                             String overlook_parant[] = f.split("\\)");
                             nr = Double.valueOf(overlook_parant[0]);
                             p.vertices[nr_of_vert].y = nr;
-                            System.out.println(p.vertices[nr_of_vert].y);
+                           // System.out.println(p.vertices[nr_of_vert].y);
                             nr_of_vert++;
                         }
                     }
@@ -139,13 +139,13 @@ class scenario {
                 fin.number_of_vertices=nr_of_vert;
                 fin.vertices= new Point[nr_of_vert];
                 for (int i = 0; i < nr_of_vert; i++) {
-                    System.out.println(p.vertices[i].x + " " + p.vertices[i].y);
+                   // System.out.println(p.vertices[i].x + " " + p.vertices[i].y);
                     fin.vertices[i]=p.vertices[i];
                 }
                 my_room = fin;
                 total_room.add(my_room);
                 furniture = parts_room[1];
-                System.out.println("Furniture = " + furniture);
+              //  System.out.println("Furniture = " + furniture);
                 int nr_of_furniture=0;
                 //parse furniture
                 String new1[] = furniture.split(";");
@@ -156,8 +156,8 @@ class scenario {
                     nr_of_vert=0;
                     String new2[] = furn.split(":");
                     pol.cost = Double.valueOf(new2[0]);
-                    System.out.println(pol.cost);
-                    System.out.println(new2[1]);
+                  //  System.out.println(pol.cost);
+                  //  System.out.println(new2[1]);
                     String furn_coord[] = new2[1].split(",");
                     for (String coord : furn_coord) {
                         double nr=0;
@@ -166,14 +166,14 @@ class scenario {
                             nr = Double.valueOf(overlook_parant[1]);
                             pol.vertices[nr_of_vert] = new Point();
                             pol.vertices[nr_of_vert].x = nr;
-                            System.out.println(pol.vertices[nr_of_vert].x);
+                          //  System.out.println(pol.vertices[nr_of_vert].x);
                         }
 
                         if (coord.charAt(coord.length() - 1) == ')' || coord.charAt(coord.length() - 2) == ')') {
                             String overlook_parant[] = coord.split("\\)");
                             nr = Double.valueOf(overlook_parant[0]);
                             pol.vertices[nr_of_vert].y = nr;
-                            System.out.println(pol.vertices[nr_of_vert].y);
+                           // System.out.println(pol.vertices[nr_of_vert].y);
                             nr_of_vert++;
                         }
 
@@ -185,9 +185,10 @@ class scenario {
                     finalp.vertices=new Point[nr_of_vert];
                     finalp.cost=pol.cost;
                     for (int i = 0; i < nr_of_vert; i++) {
-                        System.out.println(pol.vertices[i].x + " " + pol.vertices[i].y);
+                   //     System.out.println(pol.vertices[i].x + " " + pol.vertices[i].y);
                         finalp.vertices[i]=pol.vertices[i];
                     }
+                    final_furniture.add(finalp);
                     my_furniture[nr_of_furniture++]=finalp;
                 }
                 nr_of_furniture--;
@@ -199,14 +200,14 @@ class scenario {
                 }
                 for(Polygon1 poli:final_furn)
                 {
-                    System.out.println("Cost: "+poli.cost);
+                //    System.out.println("Cost: "+poli.cost);
                     for(Point pi:poli.vertices)
                     {
-                        System.out.print("x coord: " +pi.x+ "y coord " + pi.y);
+                  //      System.out.print("x coord: " +pi.x+ "y coord " + pi.y);
                     }
                 }
 
-                total_furniture.put(room_number,final_furn);
+              //  total_furniture.put(room_number,final_furn);
                 room_number++;
             }
 
@@ -215,7 +216,7 @@ class scenario {
         }
     }
 
-    
+
 
     public Coordinate[] transformCoordinates(Polygon1 f){
         int i;
@@ -250,6 +251,17 @@ class scenario {
         return result;
     }
 
+    public Polygon getPolygon(Polygon1 pol){
+        Coordinate coordinates[] = new Coordinate[pol.number_of_vertices+1];
+        for(int i=0; i< pol.number_of_vertices; i++){
+            Coordinate coordinate = new Coordinate(pol.vertices[i].x, pol.vertices[i].y);
+            coordinates[i] = coordinate;
+        }
+        coordinates[coordinates.length-1] = new Coordinate(pol.vertices[0].x, pol.vertices[0].y);
+        CoordinateSequence coordinateSequence = new CoordinateArraySequence(coordinates);
+        return new Polygon(new LinearRing(coordinateSequence, new GeometryFactory()), null, new GeometryFactory());
+    }
+
 
 
 
@@ -257,14 +269,14 @@ class scenario {
     {
         for(Polygon1 p: total_room)
         {
-            System.out.println("Room number: " +(total_room.indexOf(p)+1));
-            System.out.println("Room number of vertices: "+ p.number_of_vertices);
-            for(int i=0;i<p.number_of_vertices;i++)
-            System.out.println("Room vertices" +p.vertices[i].x+ " "+ p.vertices[i].y);
+           // System.out.println("Room number: " +(total_room.indexOf(p)+1));
+          //  System.out.println("Room number of vertices: "+ p.number_of_vertices);
+           // for(int i=0;i<p.number_of_vertices;i++)
+         //   System.out.println("Room vertices" +p.vertices[i].x+ " "+ p.vertices[i].y);
         }
 
 
-        for(Map.Entry<Integer, Polygon1[]> entry: total_furniture.entrySet()) {
+     /*   for(Map.Entry<Integer, Polygon1[]> entry: total_furniture.entrySet()) {
             Polygon1 p[]=entry.getValue();
             for(Polygon1 poli:p) {
                 System.out.println("Number of vertices: "+ (poli.number_of_vertices));
@@ -273,15 +285,16 @@ class scenario {
                     System.out.println("Coordinates: "+a.x+" "+a.y);
                 }
             }
-        }
+        }*/
     }
 
 
-    Polygon1 random_positionate(Polygon1 p, Polygon1 my_room)
+    Polygon random_position(Polygon1 copy, Polygon1 p, Polygon1 my_room)
     {
-        double xmax=0.0;
+
+        double xmax=-10000000000.0;
         double xmin=10000000000.0;
-        double ymax=0.0;
+        double ymax=-10000000000.0;
         double ymin=10000000000.0;
         for(int i=0;i<my_room.number_of_vertices;i++)
         {
@@ -306,52 +319,153 @@ class scenario {
         double yrandom = low + (high - low) * r.nextDouble();
 
 
+        p=translate_polygon(xrandom, yrandom,p);
+        Polygon camera=getPolygon(my_room);
+        //copy1=getPolygon(copy);
+        Polygon my_p=getPolygon(p);
+        boolean coincides=false;
+        if(camera.contains(my_p)) {
+            for(int i=0;i<polygons_placed.size();i++)
+                if(my_p.intersects(polygons_placed.get(i))) {
+                coincides=true;
+                break;
+                }
+            if(coincides==false) {
+                return my_p;
+            }
+        }
+
+        Polygon1 gol=new Polygon1();
+        gol.number_of_vertices=1;
+        gol.vertices=new Point[1];
+        gol.vertices[0] = new Point();
+        gol.vertices[0].x=0;
+        gol.vertices[0].y=0;
+
+
+        Coordinate coordinates[] = new Coordinate[4];
+        for(int i=0; i<4; i++){
+            Coordinate coordinate = new Coordinate(0.0, 0.0);
+            coordinates[i] = coordinate;
+        }
+        coordinates[coordinates.length-1] = new Coordinate(gol.vertices[0].x, gol.vertices[0].y);
+        CoordinateSequence coordinateSequence = new CoordinateArraySequence(coordinates);
+        return new Polygon(new LinearRing(coordinateSequence, new GeometryFactory()), null, new GeometryFactory());
+
+    }
+
+    Polygon1 transform_polygon1(Polygon p)
+    {
+        Point points[]=new Point[p.getCoordinates().length];
+        Coordinate coordinates[]=p.getCoordinates();
+        for(int i=0;i<p.getCoordinates().length;i++)
+        {
+            Point a=new Point();
+            a.x=coordinates[i].x;
+            a.y=coordinates[i].y;
+            points[i]=a;
+        }
+        Polygon1 poli=new Polygon1();
+        poli.vertices=points;
+        poli.number_of_vertices=p.getCoordinates().length;
 
         return poli;
-
     }
 
-    boolean check_can_positionate(Polygon1 p, Polygon1 my_room)
+  /*  void start_positionating(ArrayList<Polygon1> furniture, Polygon room)
     {
-        return checkIfFigureIsInsideAnotherFigure(p, my_room);
+        double area=0;
+        while(area<((40*room.getArea())/100))
+        {
+            Random rand=new Random();
+            int randomNum = rand.nextInt((final_furniture.size() - 0));
+            Polygon1 p1_room;
+            p1_room=transform_polygon1(room);
+            Polygon poligon_pozitionat;
+            Polygon1 poligon_ales_din_camera;
+            poligon_ales_din_camera=furniture.get(randomNum);
+            Polygon1 copie_poligon_ales=new Polygon1();
+            copie_poligon_ales=poligon_ales_din_camera;
+            poligon_pozitionat=random_position(copie_poligon_ales, poligon_ales_din_camera, p1_room);
+            boolean check_different=true;
+            Coordinate coordinates[];
+            coordinates=poliigon.getCoordinates();
+            Coordinate coordinates1[]=new Coordinate[poligon_pozitionat.getCoordinates().length];
+            coordinates1=poligon_pozitionat.getCoordinates();
+            for(int i=0,j=0;i< copie_poligon_ales.number_of_vertices.getCoordinates().length && j<poligon_pozitionat.getCoordinates().length;i++,j++)
+            {
+                Point a=new Point();
+                a.x=coordinates[i].x;
+                a.y=coordinates[i].y;
+                Point b=new Point();
+                b.x=coordinates1[i].x;
+                b.y=coordinates1[i].y;
+                if(a.x==b.x&&a.y==b.y)
+                    check_different=false;
+            }
+            if(check_different==true)
+            {
+                Polygon1 pol=new Polygon1();
+                pol=transform_polygon1(poligon);
+                for(int i=0;i<pol.number_of_vertices;i++)
+                {
+                    System.out.print("("+ pol.vertices[i].x+","+pol.vertices[i].y+"), ");
+                }
+                System.out.print("; ");
+                area+=poligon.getArea();
+
+            }
+
+        }
+    }*/
+
+    void start_positionating(ArrayList<Polygon1> furniture, Polygon room)
+    {
+        double area=0;
+        while(area<((90*room.getArea())/100))
+        {
+            Random rand=new Random();
+            int randomNum = rand.nextInt((final_furniture.size() - 0));
+            Polygon1 poligon_ales=furniture.get(randomNum);
+
+            Polygon1 copie_poligon_ales=new Polygon1();
+            copie_poligon_ales=poligon_ales;
+            Polygon1 camera=transform_polygon1(room);
+            Polygon poligon_randomizat= random_position(copie_poligon_ales,poligon_ales, camera);
+            Polygon copie_poligon_ales_polygon=getPolygon(copie_poligon_ales);
+            Coordinate coordinate1[]=poligon_randomizat.getCoordinates();
+            boolean coincide=false;
+            if(coordinate1[0].x==0.0&&coordinate1[0].y==0.0&&coordinate1[1].x==0.0&&coordinate1[1].y==0.0&&coordinate1[2].x==0.0&&coordinate1[2].y==0.0&&coordinate1[3].x==0.0&&coordinate1[3].y==0.0)
+                coincide=true;
+            if(coincide!=true&&!obiecte_alese.contains(randomNum))
+            {
+                polygons_placed.add(copie_poligon_ales_polygon);
+                area+=copie_poligon_ales_polygon.getArea();
+                Coordinate coord[]=poligon_randomizat.getCoordinates();
+                for(int i=0;i<coord.length-1;i++)
+                    System.out.print("("+coord[i].x+","+coord[i].y+"), ");
+                System.out.print("; ");
+
+                obiecte_alese.add(randomNum);
+            }
+        }
     }
 
-    void start_positionating(Polygon1 furniture[], Polygon1 room)
+    void ruun()
     {
-        for(int i)
+        Polygon room;
+        room=getPolygon(my_room);
+        start_positionating(final_furniture,room);
     }
 
     public static void main(String[] args) {
         scenario scenario = new scenario();
 
-        Polygon1 dummy=new Polygon1();
-        Polygon1 dummy1=new Polygon1();
-        dummy.number_of_vertices=3;
-        dummy.vertices=new Point[3];
-        dummy.vertices[0]=new Point();
-        dummy.vertices[0].x=2;
-        dummy.vertices[0].y=5;
-        dummy.vertices[1]=new Point();
-        dummy.vertices[1].x=6;
-        dummy.vertices[1].y=8;
-        dummy.vertices[2]=new Point();
-        dummy.vertices[2].x=10;
-        dummy.vertices[2].y=7;
-        dummy1.number_of_vertices=3;
-        dummy1.vertices=new Point[3];
-        dummy1.vertices[0]=new Point();
-        dummy1.vertices[0].x=6;
-        dummy1.vertices[0].y=7;
-        dummy1.vertices[1]=new Point();
-        dummy1.vertices[1].x=7;
-        dummy1.vertices[1].y=7.5;
-        dummy1.vertices[2]=new Point();
-        dummy1.vertices[2].x=8;
-        dummy1.vertices[2].y=7;
         scenario.parse_room();
         scenario.afisare();
-        System.out.print(scenario.checkIfFigureIsInsideAnotherFigure(dummy1,dummy));
-     //   scenario.parse_room();
+
+        scenario.parse_room();
+        scenario.ruun();
 
     }
 }
