@@ -29,13 +29,17 @@ public class parserviz {
                     for(String f1:part)
                     {if (f1.charAt(0) == '(' || f1.charAt(1) == '(') {
                         String overlook_parant[] = f1.split("\\(");
-                        System.out.print(overlook_parant[1] + " ");
+                        double nr=Double.valueOf(overlook_parant[1]);
+                        System.out.print(nr + " ");
                     }
 
                     if (f1.charAt(f1.length()-1) == ')' || f1.charAt(f1.length() - 2) == ')') {
                         String overlook_parant[] = f1.split("\\)");
-                        System.out.println(overlook_parant[0] + " ");
-                    }}
+                        double nr=Double.valueOf(overlook_parant[0]);
+                        System.out.print(nr + " ");
+                    }
+                    }
+                    System.out.println();
                 }
             }
 
