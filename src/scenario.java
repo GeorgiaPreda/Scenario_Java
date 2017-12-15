@@ -318,9 +318,15 @@ class scenario {
         high = ymax;
         double yrandom = low + (high - low) * r.nextDouble();
 
+        r = new Random();
+        low = 0.0;
+        high = 360.0;
+        double anglerandom = low + (high - low) * r.nextDouble();
+
 
         p=translate_polygon(xrandom, yrandom,p);
         Polygon camera=getPolygon(my_room);
+        p=rotate_by_angle(anglerandom, p);
         //copy1=getPolygon(copy);
         Polygon my_p=getPolygon(p);
         boolean coincides=false;
@@ -353,6 +359,7 @@ class scenario {
         return new Polygon(new LinearRing(coordinateSequence, new GeometryFactory()), null, new GeometryFactory());
 
     }
+
 
     Polygon1 transform_polygon1(Polygon p)
     {
@@ -422,7 +429,7 @@ class scenario {
     void start_positionating(ArrayList<Polygon1> furniture, Polygon room)
     {
         double area=0;
-        while(area<((90*room.getArea())/100))
+        while(area<((3000*room.getArea())/100))
         {
             Random rand=new Random();
             int randomNum = rand.nextInt((final_furniture.size() - 0));
@@ -444,8 +451,9 @@ class scenario {
                 Coordinate coord[]=poligon_randomizat.getCoordinates();
                 for(int i=0;i<coord.length-1;i++)
                     System.out.print("("+coord[i].x+","+coord[i].y+"), ");
-                System.out.print("; ");
-
+                System.out.println("; ");
+                System.out.println(area);
+                System.out.println(room.getArea());
                 obiecte_alese.add(randomNum);
             }
         }
